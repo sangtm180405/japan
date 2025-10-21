@@ -20,7 +20,12 @@ class PerformanceOptimizer {
     }
 
     preloadCriticalResources() {
-        // Preload critical images
+        // Only preload hero assets on pages that actually display the hero
+        const hasHeroSection = document.querySelector('.hero-section');
+        if (!hasHeroSection) {
+            return;
+        }
+
         const criticalImages = [
             '/images/hero-bg.jpg',
             '/images/logo.png'

@@ -81,6 +81,75 @@
     </div>
     @endif
 
+    {{-- Gate content: require user to start the lesson first --}}
+    @if(!$userProgress)
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="lesson-gate">
+                <div class="gate-left">
+                    <div class="gate-icon">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h2 class="gate-title">Bắt đầu bài học</h2>
+                    <p class="gate-subtitle">Mở khóa toàn bộ nội dung: Video, Từ vựng, Ngữ pháp và Bài tập.</p>
+                    <div class="gate-actions">
+                        <form action="{{ route('lessons.start', $lesson) }}" method="POST" onsubmit="this.querySelector('button[type=submit]').disabled=true; this.querySelector('button[type=submit]').innerHTML='<i class=\'fas fa-spinner fa-spin me-2\'></i>Đang bắt đầu...';">
+                            @csrf
+                            <input type="hidden" name="lesson_id" value="{{ $lesson->id }}">
+                            <button type="submit" class="btn gate-primary">
+                                <i class="fas fa-play me-2"></i>Bắt đầu học ngay
+                            </button>
+                        </form>
+                        <a href="{{ route('lessons.index') }}" class="btn gate-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Quay lại danh sách
+                        </a>
+                    </div>
+                    <ul class="gate-benefits">
+                        <li><i class="fas fa-check"></i> Theo dõi tiến độ và điểm số</li>
+                        <li><i class="fas fa-check"></i> Tự động lưu hoạt động gần đây</li>
+                        <li><i class="fas fa-check"></i> Mở khóa bài tập thực hành</li>
+                    </ul>
+                </div>
+                <div class="gate-right">
+                    <div class="gate-illustration">
+                        <div class="bubble b1"></div>
+                        <div class="bubble b2"></div>
+                        <div class="bubble b3"></div>
+                        <div class="book-card">
+                            <div class="book-spine"></div>
+                            <div class="book-pages"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+    .lesson-gate{display:flex;gap:32px;align-items:center;background:linear-gradient(135deg,#f8faff 0%,#eef2ff 100%);border-radius:20px;padding:32px;border:1px solid #e9ecff;box-shadow:0 10px 30px rgba(102,126,234,.15)}
+    .gate-left{flex:1;min-width:0}
+    .gate-right{width:340px;display:none}
+    @media(min-width:992px){.gate-right{display:block}}
+    .gate-icon{width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;margin-bottom:16px;box-shadow:0 12px 30px rgba(118,75,162,.25)}
+    .gate-title{margin:0 0 8px;font-weight:800;color:#1f2a56}
+    .gate-subtitle{margin:0 0 20px;color:#5b6b95}
+    .gate-actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+    .gate-primary{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;padding:12px 20px;border-radius:12px;font-weight:700}
+    .gate-primary:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(102,126,234,.25)}
+    .gate-secondary{border:1px solid #cdd5ff;color:#4252a2;background:#fff;padding:12px 16px;border-radius:12px}
+    .gate-benefits{list-style:none;padding:0;margin:8px 0 0;display:flex;gap:16px;flex-wrap:wrap;color:#4b5a89}
+    .gate-benefits li{display:flex;align-items:center;gap:8px}
+    .gate-benefits i{color:#22c55e}
+    .gate-illustration{position:relative;height:180px}
+    .bubble{position:absolute;border-radius:50%;background:linear-gradient(135deg,#a5b4fc,#c4b5fd);opacity:.6}
+    .b1{width:80px;height:80px;top:0;right:40px}
+    .b2{width:50px;height:50px;top:90px;right:0}
+    .b3{width:36px;height:36px;top:30px;right:140px}
+    .book-card{position:absolute;bottom:0;right:60px;width:150px;height:110px;background:#fff;border-radius:14px;border:1px solid #e8eaff;box-shadow:0 12px 28px rgba(31,42,86,.12);overflow:hidden}
+    .book-spine{position:absolute;left:0;top:0;bottom:0;width:18px;background:linear-gradient(180deg,#667eea,#7f8cf5)}
+    .book-pages{position:absolute;left:26px;right:16px;top:16px;bottom:16px;background:repeating-linear-gradient(#f8f9ff,#f8f9ff 10px,#eef1ff 11px)}
+    </style>
+    @else
+
     <!-- User Progress -->
     @if($userProgress)
     <div class="row mb-4">
@@ -266,14 +335,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body text-center">
-                    @if(!$userProgress)
-                    <form action="{{ route('lessons.start', $lesson) }}" method="POST" class="d-inline">
-                        @csrf
-                        <button type="submit" class="btn btn-primary btn-lg me-3">
-                            <i class="fas fa-play me-2"></i>Bắt đầu học
-                        </button>
-                    </form>
-                    @elseif(!$userProgress->is_completed)
+                    @if(!$userProgress->is_completed)
                     <button type="button" class="btn btn-success btn-lg" onclick="completeLesson()">
                         <i class="fas fa-check me-2"></i>Hoàn thành bài học
                     </button>
@@ -291,6 +353,7 @@
             </div>
         </div>
     </div>
+    @endif
 </div>
 
 <!-- Complete Lesson Modal -->

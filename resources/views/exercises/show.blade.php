@@ -43,16 +43,59 @@
                         @csrf
                         <div class="mb-3">
                             @php
-                                // Ensure options is an array
-                                $options = is_string($exercise->options) ? json_decode($exercise->options, true) : $exercise->options;
-                                $options = is_array($options) ? $options : [];
+                                // Normalize options into array of [label, text, value]
+                                $raw = is_string($exercise->options) ? json_decode($exercise->options, true) : $exercise->options;
+                                $raw = is_array($raw) ? $raw : [];
+                                $letters = ['A','B','C','D','E','F'];
+                                $normalized = [];
+
+                                $isAssoc = array_keys($raw) !== range(0, count($raw) - 1);
+                                if ($isAssoc) {
+                                    // Shape: { 'A': 'Tokyo', 'B': 'Osaka', ... } or { 'A': {text:'Tokyo', value:'A'} }
+                                    foreach ($raw as $k => $v) {
+                                        if (is_array($v)) {
+                                            $normalized[] = [
+                                                'label' => (string)$k,
+                                                'text' => $v['text'] ?? ($v['label'] ?? $k),
+                                                'value' => $v['value'] ?? $k,
+                                            ];
+                                        } else {
+                                            $normalized[] = [
+                                                'label' => (string)$k,
+                                                'text' => (string)$v,
+                                                'value' => (string)$k,
+                                            ];
+                                        }
+                                    }
+                                } else {
+                                    // Shape: ['Tokyo','Osaka',...] or [{label:'A',text:'Tokyo',value:'A'}]
+                                    foreach ($raw as $i => $v) {
+                                        if (is_array($v)) {
+                                            $normalized[] = [
+                                                'label' => $v['label'] ?? ($letters[$i] ?? (string)$i),
+                                                'text' => $v['text'] ?? ($v['value'] ?? ''),
+                                                'value' => $v['value'] ?? ($v['text'] ?? ''),
+                                            ];
+                                        } else {
+                                            $normalized[] = [
+                                                'label' => $letters[$i] ?? (string)$i,
+                                                'text' => (string)$v,
+                                                'value' => (string)$v,
+                                            ];
+                                        }
+                                    }
+                                }
                             @endphp
-                            @foreach($options as $index => $option)
+                            @foreach($normalized as $idx => $opt)
                             <div class="form-check mb-2">
                                 <input class="form-check-input" type="radio" name="user_answer" 
-                                       id="option{{ $index }}" value="{{ $option }}">
-                                <label class="form-check-label" for="option{{ $index }}">
-                                    {{ $option }}
+                                       id="option{{ $idx }}" value="{{ $opt['value'] }}">
+                                <label class="form-check-label" for="option{{ $idx }}">
+                                    @if($opt['text'] === $opt['label'])
+                                        {{ $opt['label'] }}
+                                    @else
+                                        <strong>{{ $opt['label'] }}.</strong> {{ $opt['text'] }}
+                                    @endif
                                 </label>
                             </div>
                             @endforeach

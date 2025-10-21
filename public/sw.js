@@ -94,11 +94,13 @@ self.addEventListener('fetch', event => {
              url.pathname.startsWith('/icons/')) {
     // Static assets - Cache First strategy
     event.respondWith(handleStaticRequest(request));
-  } else if (url.pathname.startsWith('/lessons/') || 
-             url.pathname.startsWith('/jlpt/') ||
+  } else if (url.pathname.startsWith('/jlpt/') ||
              url.pathname.startsWith('/analytics/')) {
-    // Dynamic pages - Stale While Revalidate strategy
+    // Dynamic pages (non-critical freshness) - Stale While Revalidate strategy
     event.respondWith(handleDynamicRequest(request));
+  } else if (url.pathname.startsWith('/lessons/')) {
+    // Lesson pages must reflect latest progress immediately - Network First
+    event.respondWith(handlePageRequest(request));
   } else {
     // Other requests - Network First with offline fallback
     event.respondWith(handlePageRequest(request));

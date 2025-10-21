@@ -24,9 +24,22 @@ class PWAInstaller {
         // Listen for beforeinstallprompt event
         window.addEventListener('beforeinstallprompt', (e) => {
             console.log('PWA: Install prompt available');
+            // Prevent default mini-infobar and keep the event for later
             e.preventDefault();
             this.deferredPrompt = e;
             this.showInstallButton();
+
+            // Auto-prompt once per session when eligible
+            try {
+                const alreadyPrompted = sessionStorage.getItem('pwaPromptShown') === '1';
+                if (!alreadyPrompted) {
+                    sessionStorage.setItem('pwaPromptShown', '1');
+                    // Defer slightly to allow UI to settle
+                    setTimeout(() => this.installApp(), 250);
+                }
+            } catch (err) {
+                // Ignore storage errors and rely on the button
+            }
         });
         
         // Listen for appinstalled event
