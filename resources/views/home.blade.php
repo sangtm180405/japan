@@ -1083,6 +1083,9 @@ document.addEventListener('DOMContentLoaded', function() {
     overflow: hidden;
     box-shadow: 0 5px 15px rgba(0,0,0,0.08);
     transition: all 0.3s ease;
+    display: flex;            /* ensure equal height structure */
+    flex-direction: column;   /* stack sections vertically */
+    height: 100%;             /* allow grid to equalize heights */
 }
 
 .lesson-card:hover {
@@ -1124,6 +1127,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 .lesson-content {
     padding: 25px;
+    flex: 1;                  /* take up remaining space */
 }
 
 .lesson-title {
@@ -1202,6 +1206,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 .lesson-footer {
     padding: 0 25px 25px;
+    margin-top: auto;         /* push footer to bottom */
 }
 
 .lesson-btn {
