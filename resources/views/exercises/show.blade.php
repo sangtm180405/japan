@@ -35,14 +35,19 @@
                 </div>
                 <div class="card-body">
                     <div class="mb-4">
-                        <h6>{{ $exercise->question }}</h6>
+                        <h6>{{ $exercise->question ?? 'Câu hỏi không có nội dung' }}</h6>
                     </div>
 
                     @if($exercise->type === 'multiple_choice')
                     <form id="exerciseForm">
                         @csrf
                         <div class="mb-3">
-                            @foreach($exercise->options as $index => $option)
+                            @php
+                                // Ensure options is an array
+                                $options = is_string($exercise->options) ? json_decode($exercise->options, true) : $exercise->options;
+                                $options = is_array($options) ? $options : [];
+                            @endphp
+                            @foreach($options as $index => $option)
                             <div class="form-check mb-2">
                                 <input class="form-check-input" type="radio" name="user_answer" 
                                        id="option{{ $index }}" value="{{ $option }}">

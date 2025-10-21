@@ -30,7 +30,7 @@
                                 <i class="fas fa-rocket me-2"></i>
                                 Bắt đầu ngay
                             </a>
-                            <a href="{{ route('practice.index') }}" class="btn btn-outline-primary btn-lg hero-btn">
+                            <a href="{{ route('practice.index') }}" class="btn btn-primary btn-lg hero-btn">
                                 <i class="fas fa-play me-2"></i>
                                 Luyện tập
                             </a>
