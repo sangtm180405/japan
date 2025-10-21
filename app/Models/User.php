@@ -70,6 +70,47 @@ class User extends Authenticatable
                     ->withTimestamps();
     }
 
+    public function enrollments()
+    {
+        return $this->hasMany(CourseEnrollment::class);
+    }
+
+    public function hasEnrollment($courseType)
+    {
+        return $this->enrollments()
+            ->where('course_type', $courseType)
+            ->where('status', 'active')
+            ->where(function($query) {
+                $query->whereNull('expires_at')
+                      ->orWhere('expires_at', '>', now());
+            })
+            ->exists();
+    }
+
+    public function canAccessLesson($lesson)
+    {
+        // Premium users can access all lessons
+        if ($this->hasEnrollment('premium')) {
+            return true;
+        }
+
+        // Level-specific enrollments
+        $levelCourses = [
+            1 => 'n5',
+            2 => 'n4', 
+            3 => 'n3',
+            4 => 'n2',
+            5 => 'n1'
+        ];
+
+        $requiredCourse = $levelCourses[$lesson->level] ?? null;
+        if ($requiredCourse) {
+            return $this->hasEnrollment($requiredCourse);
+        }
+
+        return false;
+    }
+
     public function getStreakAttribute()
     {
         // Calculate current streak

@@ -404,34 +404,43 @@
                             @auth
                                 @php
                                     $progress = $userProgress->get($lesson->id);
+                                    $canAccess = Auth::user()->canAccessLesson($lesson);
                                 @endphp
                                 
-                                @if($progress)
-                                    <div class="lesson-progress">
-                                        <div class="progress-info">
-                                            <span class="progress-label">Tiến độ</span>
-                                            <span class="progress-percentage">{{ $progress->accuracy_percentage }}%</span>
+                                @if($canAccess)
+                                    @if($progress)
+                                        <div class="lesson-progress">
+                                            <div class="progress-info">
+                                                <span class="progress-label">Tiến độ</span>
+                                                <span class="progress-percentage">{{ $progress->accuracy_percentage }}%</span>
+                                            </div>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width: {{ $progress->accuracy_percentage }}%"></div>
+                                            </div>
                                         </div>
-                                        <div class="progress-bar">
-                                            <div class="progress-fill" style="width: {{ $progress->accuracy_percentage }}%"></div>
+                                        
+                                        <div class="lesson-status">
+                                            @if($progress->is_completed)
+                                                <span class="status-badge completed">
+                                                    <i class="fas fa-check me-1"></i>Hoàn thành
+                                                </span>
+                                            @else
+                                                <span class="status-badge in-progress">
+                                                    <i class="fas fa-clock me-1"></i>Đang học
+                                                </span>
+                                            @endif
                                         </div>
-                                    </div>
-                                    
-                                    <div class="lesson-status">
-                                        @if($progress->is_completed)
-                                            <span class="status-badge completed">
-                                                <i class="fas fa-check me-1"></i>Hoàn thành
+                                    @else
+                                        <div class="lesson-status">
+                                            <span class="status-badge not-started">
+                                                <i class="fas fa-play me-1"></i>Chưa bắt đầu
                                             </span>
-                                        @else
-                                            <span class="status-badge in-progress">
-                                                <i class="fas fa-clock me-1"></i>Đang học
-                                            </span>
-                                        @endif
-                                    </div>
+                                        </div>
+                                    @endif
                                 @else
                                     <div class="lesson-status">
-                                        <span class="status-badge not-started">
-                                            <i class="fas fa-play me-1"></i>Chưa bắt đầu
+                                        <span class="status-badge locked">
+                                            <i class="fas fa-lock me-1"></i>Cần đăng ký
                                         </span>
                                     </div>
                                 @endif

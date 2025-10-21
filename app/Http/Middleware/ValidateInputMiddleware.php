@@ -72,10 +72,21 @@ class ValidateInputMiddleware
      */
     protected function validateLessonStart(Request $request): void
     {
-        $validator = Validator::make($request->all(), [
+        // Accept either body param or route param (supports route-model binding)
+        $routeLesson = $request->route('lesson');
+        if ($routeLesson instanceof \App\Models\Lesson) {
+            $routeLesson = $routeLesson->id;
+        }
+        $lessonId = $request->input('lesson_id') ?? $routeLesson;
+        
+        if (!is_numeric($lessonId)) {
+            abort(422, 'Invalid lesson data');
+        }
+        
+        $validator = Validator::make(['lesson_id' => $lessonId], [
             'lesson_id' => 'required|integer|exists:lessons,id'
         ]);
-
+        
         if ($validator->fails()) {
             abort(422, 'Invalid lesson data');
         }
@@ -102,7 +113,17 @@ class ValidateInputMiddleware
      */
     protected function validateExerciseSubmit(Request $request): void
     {
-        $validator = Validator::make($request->all(), [
+        // Accept exercise id from body or route param (supports route-model binding)
+        $routeExercise = $request->route('exercise');
+        if ($routeExercise instanceof \App\Models\Exercise) {
+            $routeExercise = $routeExercise->id;
+        }
+        $exerciseId = $request->input('exercise_id') ?? $routeExercise;
+        
+        $validator = Validator::make([
+            'user_answer' => $request->input('user_answer'),
+            'exercise_id' => $exerciseId
+        ], [
             'user_answer' => 'required|string|max:1000',
             'exercise_id' => 'required|integer|exists:exercises,id'
         ]);

@@ -49,6 +49,10 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
 
+// Course enrollment routes
+Route::get('/course/enrollment', [App\Http\Controllers\CourseEnrollmentController::class, 'show'])->name('course.enrollment');
+Route::post('/course/enroll', [App\Http\Controllers\CourseEnrollmentController::class, 'enroll'])->name('course.enroll');
+
 // Protected routes
 Route::middleware(['auth', 'validate.input'])->group(function () {
     Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
