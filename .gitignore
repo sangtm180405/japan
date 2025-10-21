@@ -3,6 +3,9 @@
 /public/build
 /public/hot
 /public/storage
+/public/audio/
+/storage/logs/
+/storage/framework/
 /storage/*.key
 /vendor
 .env
@@ -17,3 +20,5 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+/*.zip
+/*.exe
