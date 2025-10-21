@@ -1,0 +1,112 @@
+{
+  "lessons": [
+    {
+      "title": "Hiragana cơ bản - Bảng chữ cái",
+      "description": "Học bảng chữ cái Hiragana cơ bản, bao gồm các nguyên âm và phụ âm đầu tiên.",
+      "level": 1,
+      "order": 1,
+      "is_active": true,
+      "vocabularies": [
+        {
+          "japanese": "あ",
+          "hiragana": "あ",
+          "romaji": "a",
+          "vietnamese": "chữ cái a",
+          "example_sentence": "あお (ao) - màu xanh",
+          "example_translation": "màu xanh",
+          "difficulty_level": 1
+        },
+        {
+          "japanese": "い",
+          "hiragana": "い",
+          "romaji": "i",
+          "vietnamese": "chữ cái i",
+          "example_sentence": "いぬ (inu) - con chó",
+          "example_translation": "con chó",
+          "difficulty_level": 1
+        }
+      ],
+      "grammars": [
+        {
+          "title": "Cách đọc Hiragana",
+          "explanation": "Hiragana là bảng chữ cái cơ bản của tiếng Nhật, được sử dụng để viết các từ thuần Nhật và các phần ngữ pháp.",
+          "structure": "あ (a) - い (i) - う (u) - え (e) - お (o)",
+          "examples": [
+            {"japanese": "あお", "translation": "màu xanh"},
+            {"japanese": "いぬ", "translation": "con chó"}
+          ],
+          "usage_notes": [
+            "Hiragana được viết từ trái sang phải, từ trên xuống dưới",
+            "Mỗi ký tự đại diện cho một âm tiết"
+          ],
+          "difficulty_level": 1
+        }
+      ],
+      "exercises": [
+        {
+          "type": "multiple_choice",
+          "question": "Chữ cái \"あ\" được đọc như thế nào?",
+          "options": ["a", "i", "u", "e"],
+          "correct_answer": "a",
+          "explanation": "Chữ cái \"あ\" được đọc là \"a\" trong tiếng Nhật.",
+          "points": 1,
+          "difficulty_level": 1
+        }
+      ]
+    },
+    {
+      "title": "Số đếm từ 1-10",
+      "description": "Học cách đếm số từ 1 đến 10 trong tiếng Nhật.",
+      "level": 1,
+      "order": 2,
+      "is_active": true,
+      "vocabularies": [
+        {
+          "japanese": "いち",
+          "hiragana": "いち",
+          "romaji": "ichi",
+          "vietnamese": "số 1",
+          "example_sentence": "いちがつ (ichigatsu) - tháng 1",
+          "example_translation": "tháng 1",
+          "difficulty_level": 1
+        },
+        {
+          "japanese": "に",
+          "hiragana": "に",
+          "romaji": "ni",
+          "vietnamese": "số 2",
+          "example_sentence": "にがつ (nigatsu) - tháng 2",
+          "example_translation": "tháng 2",
+          "difficulty_level": 1
+        }
+      ],
+      "grammars": [
+        {
+          "title": "Cách đếm số trong tiếng Nhật",
+          "explanation": "Trong tiếng Nhật, cách đếm số có thể thay đổi tùy thuộc vào vật được đếm.",
+          "structure": "いち (1) - に (2) - さん (3) - よん/し (4) - ご (5)",
+          "examples": [
+            {"japanese": "いちがつ", "translation": "tháng 1"},
+            {"japanese": "にがつ", "translation": "tháng 2"}
+          ],
+          "usage_notes": [
+            "Số 4 có thể đọc là \"よん\" hoặc \"し\"",
+            "Số 7 có thể đọc là \"なな\" hoặc \"しち\""
+          ],
+          "difficulty_level": 1
+        }
+      ],
+      "exercises": [
+        {
+          "type": "multiple_choice",
+          "question": "Số 1 trong tiếng Nhật là gì?",
+          "options": ["いち", "に", "さん", "よん"],
+          "correct_answer": "いち",
+          "explanation": "Số 1 trong tiếng Nhật là \"いち\" (ichi).",
+          "points": 1,
+          "difficulty_level": 1
+        }
+      ]
+    }
+  ]
+}
