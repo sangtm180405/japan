@@ -66,6 +66,158 @@
             display: inline-flex; align-items: center; justify-content: center;
             color: #fff; font-weight: 700;
         }
+
+        /* Mobile Navigation Styles */
+        .mobile-nav {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .mobile-nav .navbar-brand {
+            font-size: 1.1rem;
+        }
+
+        .mobile-nav .brand-text {
+            font-weight: 700;
+            color: #333;
+        }
+
+        /* Mobile Search Toggle */
+        .search-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .search-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+        }
+
+        /* Mobile Search Bar */
+        .mobile-search-bar {
+            background: rgba(248, 249, 250, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(0,0,0,0.05);
+            padding: 15px 0;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Mobile Navigation Links */
+        .mobile-nav .nav-link {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 2px 0;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            min-height: 44px; /* Touch-friendly */
+        }
+
+        .mobile-nav .nav-link:hover {
+            background: rgba(0,123,255,0.1);
+            transform: translateX(5px);
+        }
+
+        .mobile-nav .nav-link.active {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white !important;
+            font-weight: 600;
+        }
+
+        .mobile-nav .nav-link i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Mobile Dropdown */
+        .mobile-nav .dropdown-menu {
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            margin-top: 8px;
+        }
+
+        .mobile-nav .dropdown-item {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 2px 8px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-nav .dropdown-item:hover {
+            background: rgba(0,123,255,0.1);
+            transform: translateX(5px);
+        }
+
+        /* Mobile Navbar Toggle */
+        .mobile-nav .navbar-toggler {
+            border: none;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-nav .navbar-toggler:focus {
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.25);
+        }
+
+        .mobile-nav .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 991.98px) {
+            .mobile-nav .navbar-collapse {
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(10px);
+                border-radius: 12px;
+                margin: 10px;
+                padding: 15px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            }
+
+            .mobile-nav .navbar-nav {
+                margin: 0;
+            }
+
+            .mobile-nav .navbar-nav .nav-item {
+                margin: 0;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .mobile-nav .container-fluid {
+                padding: 0 15px;
+            }
+
+            .mobile-nav .brand-text {
+                font-size: 0.9rem;
+            }
+
+            .search-toggle {
+                width: 36px;
+                height: 36px;
+            }
+        }
         
         .main-content {
             background: rgba(255, 255, 255, 0.95);
@@ -195,60 +347,77 @@
     @stack('styles')
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
-        <div class="container">
+    <!-- Mobile-First Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top mobile-nav">
+        <div class="container-fluid">
+            <!-- Brand -->
             <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="{{ route('home') }}">
                 <span class="brand-mark">日</span>
-                <span>Japanese Learning</span>
+                <span class="brand-text d-none d-sm-inline">Japanese Learning</span>
+                <span class="brand-text d-sm-none">JLearn</span>
             </a>
             
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <!-- Mobile Search Toggle -->
+            <button class="btn btn-outline-primary d-lg-none me-2 search-toggle" type="button" id="mobileSearchToggle">
+                <i class="fas fa-search"></i>
+            </button>
+            
+            <!-- Mobile Menu Toggle -->
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             
             <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Main Navigation -->
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">
-                            <i class="fas fa-home me-1"></i>Trang chủ
+                            <i class="fas fa-home me-2"></i>
+                            <span>Trang chủ</span>
                         </a>
                     </li>
                     @auth
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
-                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                            <i class="fas fa-tachometer-alt me-2"></i>
+                            <span>Dashboard</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('lessons.*') ? 'active' : '' }}" href="{{ route('lessons.index') }}">
-                            <i class="fas fa-book me-1"></i>Bài học
+                            <i class="fas fa-book me-2"></i>
+                            <span>Bài học</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('alphabets.*') ? 'active' : '' }}" href="{{ route('alphabets.index') }}">
-                            <i class="fas fa-language me-1"></i>Bảng chữ cái
+                            <i class="fas fa-language me-2"></i>
+                            <span>Bảng chữ cái</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('practice.*') ? 'active' : '' }}" href="{{ route('practice.index') }}">
-                            <i class="fas fa-dumbbell me-1"></i>Luyện tập
+                            <i class="fas fa-dumbbell me-2"></i>
+                            <span>Luyện tập</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('jlpt.*') ? 'active' : '' }}" href="{{ route('jlpt.index') }}">
-                            <i class="fas fa-graduation-cap me-1"></i>JLPT
+                            <i class="fas fa-graduation-cap me-2"></i>
+                            <span>JLPT</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('achievements.*') ? 'active' : '' }}" href="{{ route('achievements.index') }}">
-                            <i class="fas fa-trophy me-1"></i>Thành tích
+                            <i class="fas fa-trophy me-2"></i>
+                            <span>Thành tích</span>
                         </a>
                     </li>
                     @endauth
                 </ul>
                 
-                <!-- Search Bar -->
-                <div class="navbar-search me-3">
+                <!-- Search Bar - Desktop -->
+                <div class="navbar-search d-none d-lg-block me-3">
                     <form method="GET" action="{{ route('search.index') }}" class="d-flex">
                         <div class="input-group">
                             <input type="text" 
@@ -264,25 +433,28 @@
                     </form>
                 </div>
                 
-                
+                <!-- User Menu -->
                 <ul class="navbar-nav">
                     @guest
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('login') }}">
-                            <i class="fas fa-sign-in-alt me-1"></i>Đăng nhập
+                            <i class="fas fa-sign-in-alt me-2"></i>
+                            <span>Đăng nhập</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('register') }}">
-                            <i class="fas fa-user-plus me-1"></i>Đăng ký
+                            <i class="fas fa-user-plus me-2"></i>
+                            <span>Đăng ký</span>
                         </a>
                     </li>
                     @else
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user me-1"></i>{{ Auth::user()->name }}
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-2"></i>
+                            <span class="d-none d-sm-inline">{{ Auth::user()->name }}</span>
                         </a>
-                        <ul class="dropdown-menu">
+                        <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="{{ route('profile.index') }}">
                                 <i class="fas fa-user-cog me-2"></i>Hồ sơ
                             </a></li>
@@ -303,6 +475,25 @@
                     </li>
                     @endguest
                 </ul>
+            </div>
+        </div>
+        
+        <!-- Mobile Search Bar -->
+        <div class="mobile-search-bar d-lg-none" id="mobileSearchBar" style="display: none;">
+            <div class="container-fluid">
+                <form method="GET" action="{{ route('search.index') }}" class="d-flex">
+                    <div class="input-group">
+                        <input type="text" 
+                               name="q" 
+                               class="form-control" 
+                               placeholder="Tìm kiếm..."
+                               value="{{ request('q') }}"
+                               style="border-radius: 20px 0 0 20px; border-right: none;">
+                        <button class="btn btn-primary" type="submit" style="border-radius: 0 20px 20px 0;">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </nav>
@@ -358,6 +549,117 @@
     <script src="{{ asset('js/audio-player.js') }}" defer></script>
     <!-- PWA Install Handler -->
     <script src="{{ asset('js/pwa-install.js') }}" defer></script>
+    
+    <!-- Mobile Navigation Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile Search Toggle
+            const mobileSearchToggle = document.getElementById('mobileSearchToggle');
+            const mobileSearchBar = document.getElementById('mobileSearchBar');
+            
+            if (mobileSearchToggle && mobileSearchBar) {
+                mobileSearchToggle.addEventListener('click', function() {
+                    if (mobileSearchBar.style.display === 'none' || mobileSearchBar.style.display === '') {
+                        mobileSearchBar.style.display = 'block';
+                        mobileSearchBar.querySelector('input').focus();
+                        mobileSearchToggle.innerHTML = '<i class="fas fa-times"></i>';
+                    } else {
+                        mobileSearchBar.style.display = 'none';
+                        mobileSearchToggle.innerHTML = '<i class="fas fa-search"></i>';
+                    }
+                });
+            }
+            
+            // Close mobile search when clicking outside
+            document.addEventListener('click', function(event) {
+                if (mobileSearchBar && mobileSearchToggle) {
+                    if (!mobileSearchBar.contains(event.target) && 
+                        !mobileSearchToggle.contains(event.target) && 
+                        window.innerWidth < 992) {
+                        mobileSearchBar.style.display = 'none';
+                        mobileSearchToggle.innerHTML = '<i class="fas fa-search"></i>';
+                    }
+                }
+            });
+            
+            // Navbar scroll effect
+            let lastScrollTop = 0;
+            const navbar = document.querySelector('.mobile-nav');
+            
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (scrollTop > lastScrollTop && scrollTop > 100) {
+                    // Scrolling down
+                    navbar.style.transform = 'translateY(-100%)';
+                } else {
+                    // Scrolling up
+                    navbar.style.transform = 'translateY(0)';
+                }
+                
+                lastScrollTop = scrollTop;
+            });
+            
+            // Smooth scroll for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+            
+            // Auto-close mobile menu when clicking on a link
+            const mobileMenuLinks = document.querySelectorAll('.mobile-nav .nav-link');
+            const navbarCollapse = document.querySelector('.navbar-collapse');
+            
+            mobileMenuLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth < 992 && navbarCollapse.classList.contains('show')) {
+                        const bsCollapse = new bootstrap.Collapse(navbarCollapse);
+                        bsCollapse.hide();
+                    }
+                });
+            });
+            
+            // Touch gestures for mobile
+            let touchStartX = 0;
+            let touchEndX = 0;
+            
+            document.addEventListener('touchstart', function(e) {
+                touchStartX = e.changedTouches[0].screenX;
+            });
+            
+            document.addEventListener('touchend', function(e) {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            });
+            
+            function handleSwipe() {
+                const swipeThreshold = 50;
+                const diff = touchStartX - touchEndX;
+                
+                if (Math.abs(diff) > swipeThreshold) {
+                    if (diff > 0) {
+                        // Swipe left - could open search
+                        if (window.innerWidth < 992 && !mobileSearchBar.style.display) {
+                            mobileSearchToggle.click();
+                        }
+                    } else {
+                        // Swipe right - could close search
+                        if (window.innerWidth < 992 && mobileSearchBar.style.display === 'block') {
+                            mobileSearchToggle.click();
+                        }
+                    }
+                }
+            }
+        });
+    </script>
     
     
     @yield('scripts')
