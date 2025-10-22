@@ -52,7 +52,7 @@ class SearchController extends Controller
                     'title' => $lesson->title,
                     'description' => $lesson->description,
                     'level' => $lesson->level_name,
-                    'url' => route('lessons.show', $lesson),
+                    'url' => route('lessons.show', ['lesson' => $lesson->id]),
                     'icon' => 'fas fa-book'
                 ];
             });
@@ -77,16 +77,21 @@ class SearchController extends Controller
                 });
             }
             
-            $vocabularies = $vocabQuery->get()->map(function($vocab) {
-                return [
-                    'type' => 'vocabulary',
-                    'title' => $vocab->japanese . ' (' . $vocab->hiragana . ')',
-                    'description' => $vocab->vietnamese,
-                    'level' => $vocab->lesson->level_name ?? 'N/A',
-                    'url' => route('lessons.show', $vocab->lesson),
-                    'icon' => 'fas fa-language'
-                ];
-            });
+            $vocabularies = $vocabQuery->get()
+                // Bỏ các từ vựng không gắn với bài học để tránh thiếu tham số route
+                ->filter(function($vocab) {
+                    return !is_null($vocab->lesson);
+                })
+                ->map(function($vocab) {
+                    return [
+                        'type' => 'vocabulary',
+                        'title' => $vocab->japanese . ' (' . $vocab->hiragana . ')',
+                        'description' => $vocab->vietnamese,
+                        'level' => $vocab->lesson->level_name ?? 'N/A',
+                        'url' => route('lessons.show', ['lesson' => $vocab->lesson->id]),
+                        'icon' => 'fas fa-language'
+                    ];
+                })->values();
             
             $results = $results->merge($vocabularies);
         }

@@ -104,11 +104,17 @@
 
         /* Mobile Search Bar */
         .mobile-search-bar {
-            background: rgba(248, 249, 250, 0.95);
+            position: fixed;
+            top: 64px; /* sits right under the fixed navbar */
+            left: 0;
+            right: 0;
+            z-index: 1040;
+            background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(0,0,0,0.05);
-            padding: 15px 0;
-            animation: slideDown 0.3s ease;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 10px 15px;
+            animation: slideDown 0.2s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
         }
 
         @keyframes slideDown {
@@ -131,6 +137,36 @@
             display: flex;
             align-items: center;
             min-height: 44px; /* Touch-friendly */
+        }
+
+        /* Mobile Search Input styles */
+        .mobile-search-bar .input-group {
+            border-radius: 9999px;
+            overflow: hidden;
+            box-shadow: 0 6px 16px rgba(79,70,229,0.12);
+            background: #fff;
+        }
+        .mobile-search-bar .form-control {
+            height: 42px;
+            border: 1px solid #e5e7eb;
+            border-right: 0;
+            border-radius: 9999px 0 0 9999px !important;
+            padding-left: 14px;
+        }
+        .mobile-search-bar .form-control:focus {
+            outline: none;
+            box-shadow: none;
+            border-color: #c7d2fe; /* softer focus */
+        }
+        .mobile-search-bar .btn.btn-primary {
+            height: 42px;
+            border: none;
+            border-radius: 0 9999px 9999px 0 !important;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+        .mobile-search-bar .btn.btn-primary:active,
+        .mobile-search-bar .btn.btn-primary:focus {
+            box-shadow: none;
         }
 
         .mobile-nav .nav-link:hover {
@@ -358,15 +394,15 @@
                 <span class="brand-text d-sm-none">JLearn</span>
             </a>
             
-            <!-- Mobile Search Toggle -->
-            <button class="btn btn-outline-primary d-lg-none me-2 search-toggle" type="button" id="mobileSearchToggle">
-                <i class="fas fa-search"></i>
-            </button>
-            
-            <!-- Mobile Menu Toggle -->
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <!-- Mobile Actions (right side) -->
+            <div class="d-flex align-items-center ms-auto d-lg-none">
+                <button class="btn btn-outline-primary me-2 search-toggle" type="button" id="mobileSearchToggle">
+                    <i class="fas fa-search"></i>
+                </button>
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
             
             <div class="collapse navbar-collapse" id="navbarNav">
                 <!-- Main Navigation -->
@@ -495,8 +531,8 @@
                                class="form-control" 
                                placeholder="Tìm kiếm..."
                                value="{{ request('q') }}"
-                               style="border-radius: 20px 0 0 20px; border-right: none;">
-                        <button class="btn btn-primary" type="submit" style="border-radius: 0 20px 20px 0;">
+                               >
+                        <button class="btn btn-primary" type="submit">
                             <i class="fas fa-search"></i>
                         </button>
                     </div>
@@ -568,28 +604,42 @@
             // Mobile Search Toggle
             const mobileSearchToggle = document.getElementById('mobileSearchToggle');
             const mobileSearchBar = document.getElementById('mobileSearchBar');
+            let isMobileSearchOpen = false;
             
             if (mobileSearchToggle && mobileSearchBar) {
-                mobileSearchToggle.addEventListener('click', function() {
-                    if (mobileSearchBar.style.display === 'none' || mobileSearchBar.style.display === '') {
+                mobileSearchToggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (!isMobileSearchOpen) {
+                        // Position just below navbar height dynamically
+                        const nav = document.querySelector('.mobile-nav');
+                        if (nav) {
+                            const h = nav.getBoundingClientRect().height;
+                            mobileSearchBar.style.top = h + 'px';
+                        }
                         mobileSearchBar.style.display = 'block';
-                        mobileSearchBar.querySelector('input').focus();
+                        const input = mobileSearchBar.querySelector('input');
+                        if (input) input.focus();
                         mobileSearchToggle.innerHTML = '<i class="fas fa-times"></i>';
+                        isMobileSearchOpen = true;
                     } else {
                         mobileSearchBar.style.display = 'none';
                         mobileSearchToggle.innerHTML = '<i class="fas fa-search"></i>';
+                        isMobileSearchOpen = false;
                     }
-                });
+                }, true);
+                // Prevent clicks inside the bar from bubbling to document
+                mobileSearchBar.addEventListener('click', function(e){ e.stopPropagation(); }, true);
             }
             
             // Close mobile search when clicking outside
             document.addEventListener('click', function(event) {
-                if (mobileSearchBar && mobileSearchToggle) {
-                    if (!mobileSearchBar.contains(event.target) && 
-                        !mobileSearchToggle.contains(event.target) && 
-                        window.innerWidth < 992) {
-                        mobileSearchBar.style.display = 'none';
-                        mobileSearchToggle.innerHTML = '<i class="fas fa-search"></i>';
+                if (window.innerWidth < 992 && isMobileSearchOpen) {
+                    if (mobileSearchBar && mobileSearchToggle) {
+                        if (!mobileSearchBar.contains(event.target) && !mobileSearchToggle.contains(event.target)) {
+                            mobileSearchBar.style.display = 'none';
+                            mobileSearchToggle.innerHTML = '<i class="fas fa-search"></i>';
+                            isMobileSearchOpen = false;
+                        }
                     }
                 }
             });
@@ -659,14 +709,10 @@
                 if (Math.abs(diff) > swipeThreshold) {
                     if (diff > 0) {
                         // Swipe left - could open search
-                        if (window.innerWidth < 992 && !mobileSearchBar.style.display) {
-                            mobileSearchToggle.click();
-                        }
+                        if (window.innerWidth < 992 && !isMobileSearchOpen) mobileSearchToggle.click();
                     } else {
                         // Swipe right - could close search
-                        if (window.innerWidth < 992 && mobileSearchBar.style.display === 'block') {
-                            mobileSearchToggle.click();
-                        }
+                        if (window.innerWidth < 992 && isMobileSearchOpen) mobileSearchToggle.click();
                     }
                 }
             }

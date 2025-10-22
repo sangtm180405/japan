@@ -176,10 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             } catch (error) {
                 console.error('Audio playback error:', error);
-                // Show pronunciation guide as fallback
-                const guide = window.japaneseAudioPlayer?.getPronunciationGuide(character, 'hiragana') || 
-                             `${character} - Phát âm tiếng Nhật`;
-                alert(`Phát âm: ${character}\nHướng dẫn: ${guide}`);
+                // Không hiển thị alert gây phiền, chỉ log lỗi
             } finally {
                 // Restore button state
                 button.innerHTML = originalHTML;
