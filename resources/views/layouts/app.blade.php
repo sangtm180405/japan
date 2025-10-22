@@ -44,6 +44,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
     
+    <!-- Enhanced Audio CSS -->
+    <link rel="stylesheet" href="{{ asset('css/enhanced-audio.css') }}">
+    
     <style>
         body {
             font-family: 'Noto Sans JP', sans-serif;
@@ -551,6 +554,11 @@
     <script src="{{ asset('js/lazy-loading.js') }}" defer></script>
     <!-- Japanese Audio Player -->
     <script src="{{ asset('js/audio-player.js') }}" defer></script>
+    <!-- Enhanced Audio System -->
+    <script src="{{ asset('js/enhanced-audio-player.js') }}" defer></script>
+    <script src="{{ asset('js/enhanced-tts.js') }}" defer></script>
+    <script src="{{ asset('js/audio-visualizer.js') }}" defer></script>
+    <script src="{{ asset('js/unified-audio-system.js') }}" defer></script>
     <!-- PWA Install Handler -->
     <script src="{{ asset('js/pwa-install.js') }}" defer></script>
     

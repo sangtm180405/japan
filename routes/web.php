@@ -90,6 +90,8 @@ Route::middleware(['auth', 'validate.input'])->group(function () {
         // Practice
         Route::get('/practice', [PracticeController::class, 'index'])->name('practice.index');
         Route::get('/practice/alphabet', [PracticeController::class, 'alphabetPractice'])->name('practice.alphabet');
+        Route::get('/practice/hiragana', [PracticeController::class, 'hiraganaPractice'])->name('practice.hiragana');
+        Route::get('/practice/katakana', [PracticeController::class, 'katakanaPractice'])->name('practice.katakana');
         Route::get('/practice/vocabulary', [PracticeController::class, 'vocabularyPractice'])->name('practice.vocabulary');
         Route::get('/practice/kanji', [PracticeController::class, 'kanjiPractice'])->name('practice.kanji');
         Route::get('/practice/mixed', [PracticeController::class, 'mixedPractice'])->name('practice.mixed');

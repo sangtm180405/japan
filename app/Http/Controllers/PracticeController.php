@@ -47,6 +47,32 @@ class PracticeController extends Controller
         return view('practice.alphabet', compact('characters', 'type', 'level', 'mode'));
     }
 
+    public function hiraganaPractice(Request $request)
+    {
+        $mode = $request->get('mode', 'recognition'); // recognition, writing, pronunciation
+
+        $characters = Alphabet::where('type', 'hiragana')
+            ->where('is_active', true)
+            ->inRandomOrder()
+            ->limit(20)
+            ->get();
+
+        return view('practice.hiragana', compact('characters', 'mode'));
+    }
+
+    public function katakanaPractice(Request $request)
+    {
+        $mode = $request->get('mode', 'recognition'); // recognition, writing, pronunciation
+
+        $characters = Alphabet::where('type', 'katakana')
+            ->where('is_active', true)
+            ->inRandomOrder()
+            ->limit(20)
+            ->get();
+
+        return view('practice.katakana', compact('characters', 'mode'));
+    }
+
     public function vocabularyPractice(Request $request)
     {
         $level = $request->get('level', 1);
