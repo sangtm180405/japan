@@ -239,6 +239,16 @@ function showResult(data) {
         `;
     }
     
+    // Kiểm tra xem có hoàn thành bài học không
+    if (data.lesson_completed) {
+        resultHtml += `
+            <div class="alert alert-info mt-3">
+                <i class="fas fa-trophy me-2"></i>
+                <strong>Chúc mừng!</strong> Bạn đã hoàn thành bài học này. Tiến độ và điểm số đã được cập nhật.
+            </div>
+        `;
+    }
+    
     resultContent.innerHTML = resultHtml;
     resultSection.style.display = 'block';
     

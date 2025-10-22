@@ -406,6 +406,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('listening.*') ? 'active' : '' }}" href="{{ route('listening.index') }}">
+                            <i class="fas fa-headphones me-2"></i>
+                            <span>Luyện nghe</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('achievements.*') ? 'active' : '' }}" href="{{ route('achievements.index') }}">
                             <i class="fas fa-trophy me-2"></i>
                             <span>Thành tích</span>

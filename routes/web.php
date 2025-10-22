@@ -146,6 +146,15 @@ Route::prefix('jlpt')->group(function () {
     Route::get('/dialogues', [App\Http\Controllers\JLPTController::class, 'dialogues'])->name('jlpt.dialogues');
 });
 
+// Listening Practice Routes
+Route::prefix('listening')->group(function () {
+    Route::get('/', [App\Http\Controllers\ListeningController::class, 'index'])->name('listening.index');
+    Route::get('/practice', [App\Http\Controllers\ListeningController::class, 'practice'])->name('listening.practice');
+    Route::get('/level/{level}', [App\Http\Controllers\ListeningController::class, 'levelPractice'])->name('listening.level-practice');
+    Route::get('/{listeningExercise}', [App\Http\Controllers\ListeningController::class, 'show'])->name('listening.show');
+    Route::post('/{listeningExercise}/submit', [App\Http\Controllers\ListeningController::class, 'submit'])->name('listening.submit');
+});
+
 // Debug route
 Route::get('/debug-buttons', function () {
     return view('debug-buttons');
