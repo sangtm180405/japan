@@ -103,7 +103,9 @@ class UnifiedAudioSystem {
                 return audioPath;
             }
         } catch (error) {
-            console.log(`Audio file not found: ${audioPath}`);
+            // Silently handle missing audio files - this is expected
+            // Audio files don't exist, will use TTS fallback instead
+            // No need to log 404 errors as they're expected
         }
 
         return null;
@@ -127,6 +129,14 @@ class UnifiedAudioSystem {
     }
 
     async preloadCommonAudio() {
+        console.log('🎵 Audio preloading disabled - using TTS fallback only');
+        
+        // Skip preloading completely to prevent 404 errors
+        // Audio files don't exist, TTS fallback works perfectly
+        return;
+        
+        // Original preloading code commented out
+        /*
         const commonCharacters = {
             hiragana: ['あ', 'い', 'う', 'え', 'お', 'か', 'き', 'く', 'け', 'こ'],
             katakana: ['ア', 'イ', 'ウ', 'エ', 'オ', 'カ', 'キ', 'ク', 'ケ', 'コ'],
@@ -144,6 +154,7 @@ class UnifiedAudioSystem {
 
         // Preload audio files
         await this.preloadAudioFiles();
+        */
     }
 
     async preloadAudioFiles() {

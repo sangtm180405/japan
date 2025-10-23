@@ -46,6 +46,10 @@
     
     <!-- Enhanced Audio CSS -->
     <link rel="stylesheet" href="{{ asset('css/enhanced-audio.css') }}">
+    <!-- Responsive Enhancements CSS -->
+    <link rel="stylesheet" href="{{ asset('css/responsive-enhancements.css') }}">
+    <!-- Mobile Navigation CSS -->
+    <link rel="stylesheet" href="{{ asset('css/mobile-navigation.css') }}">
     
     <style>
         body {
@@ -591,12 +595,14 @@
     <!-- Japanese Audio Player -->
     <script src="{{ asset('js/audio-player.js') }}" defer></script>
     <!-- Enhanced Audio System -->
-    <script src="{{ asset('js/enhanced-audio-player.js') }}" defer></script>
-    <script src="{{ asset('js/enhanced-tts.js') }}" defer></script>
-    <script src="{{ asset('js/audio-visualizer.js') }}" defer></script>
-    <script src="{{ asset('js/unified-audio-system.js') }}" defer></script>
+    <!-- <script src="{{ asset('js/enhanced-audio-player.js') }}" defer></script> -->
+    <!-- <script src="{{ asset('js/enhanced-tts.js') }}" defer></script> -->
+    <!-- <script src="{{ asset('js/audio-visualizer.js') }}" defer></script> -->
+    <!-- <script src="{{ asset('js/unified-audio-system.js') }}" defer></script> -->
     <!-- PWA Install Handler -->
     <script src="{{ asset('js/pwa-install.js') }}" defer></script>
+    <!-- Mobile Navigation -->
+    <script src="{{ asset('js/mobile-navigation.js') }}" defer></script>
     
     <!-- Mobile Navigation Script -->
     <script>

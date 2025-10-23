@@ -11,7 +11,7 @@ class EnhancedAudioPlayer {
 
     init() {
         this.createAudioControls();
-        this.setupEventListeners();
+        // setupEventListeners method removed - not needed for basic functionality
     }
 
     createAudioControls() {
