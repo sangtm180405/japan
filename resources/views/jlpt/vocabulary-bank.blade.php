@@ -81,9 +81,16 @@
                             <td>{{ $v->vietnamese }}</td>
                             <td><span class="badge bg-light text-dark">{{ $v->topic ?? '—' }}</span></td>
                             <td class="text-center">
-                                <button class="btn btn-sm btn-outline-primary" onclick="playText('{{ $v->japanese }}')">
-                                    <i class="fas fa-volume-up"></i>
-                                </button>
+                                <div class="d-flex align-items-center justify-content-center gap-2">
+                                    <button class="btn btn-sm btn-outline-primary" onclick="playVocabularyTTS('{{ $v->japanese }}')" id="playBtn-{{ $v->id }}">
+                                        <i class="fas fa-volume-up"></i>
+                                    </button>
+                                    <select class="form-select form-select-sm" id="ttsSpeed-{{ $v->id }}" style="width: 80px;">
+                                        <option value="0.8">0.8x</option>
+                                        <option value="1.0" selected>1.0x</option>
+                                        <option value="1.2">1.2x</option>
+                                    </select>
+                                </div>
                             </td>
                         </tr>
                         @endforeach
@@ -106,17 +113,87 @@
 
 @push('scripts')
 <script>
-function playText(text){
-    if (typeof AudioPlayer !== 'undefined') {
-        AudioPlayer.playText(text);
-    } else if (window.playText) {
-        window.playText(text, { lang: 'ja-JP' });
-    } else {
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'ja-JP';
-        speechSynthesis.speak(utterance);
+let currentUtterance = null;
+
+function playVocabularyTTS(text) {
+    try {
+        // Cancel any ongoing speech
+        if (currentUtterance) {
+            speechSynthesis.cancel();
+        }
+        
+        // Get the vocabulary ID from the button
+        const button = event.target.closest('button');
+        const vocabId = button.id.replace('playBtn-', '');
+        const speedSelect = document.getElementById(`ttsSpeed-${vocabId}`);
+        const speed = speedSelect ? parseFloat(speedSelect.value) : 1.0;
+        
+        // Update button state
+        const icon = button.querySelector('i');
+        icon.className = 'fas fa-spinner fa-spin';
+        button.disabled = true;
+        
+        // Create new utterance
+        currentUtterance = new SpeechSynthesisUtterance(text);
+        currentUtterance.lang = 'ja-JP';
+        currentUtterance.rate = speed;
+        currentUtterance.pitch = 1.0;
+        currentUtterance.volume = 0.8;
+        
+        // Try to find Japanese voice
+        const voices = speechSynthesis.getVoices();
+        const japaneseVoice = voices.find(voice => 
+            voice.lang.startsWith('ja') || 
+            voice.name.includes('Japanese') ||
+            voice.name.includes('ja')
+        );
+        
+        if (japaneseVoice) {
+            currentUtterance.voice = japaneseVoice;
+        }
+        
+        // Event handlers
+        currentUtterance.onend = function() {
+            restoreButton(button);
+        };
+        
+        currentUtterance.onerror = function(error) {
+            console.error('TTS Error:', error);
+            restoreButton(button);
+        };
+        
+        // Speak
+        speechSynthesis.speak(currentUtterance);
+        
+        // Fallback timeout
+        setTimeout(() => {
+            if (speechSynthesis.speaking) {
+                restoreButton(button);
+            }
+        }, 3000);
+        
+    } catch (error) {
+        console.error('TTS Error:', error);
+        restoreButton(event.target.closest('button'));
     }
 }
+
+function restoreButton(button) {
+    if (button) {
+        const icon = button.querySelector('i');
+        icon.className = 'fas fa-volume-up';
+        button.disabled = false;
+    }
+}
+
+// Load voices when page loads
+window.addEventListener('load', function() {
+    if (speechSynthesis.getVoices().length === 0) {
+        speechSynthesis.addEventListener('voiceschanged', function() {
+            console.log('Voices loaded:', speechSynthesis.getVoices().length);
+        });
+    }
+});
 </script>
 @endpush
 
@@ -146,6 +223,20 @@ function playText(text){
 .japanese-text {
     font-family: 'Noto Sans JP', sans-serif;
     font-size: 1.1em;
+}
+
+.form-select-sm {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+}
+
+.d-flex.gap-2 {
+    gap: 0.5rem !important;
 }
 
 .table th {
