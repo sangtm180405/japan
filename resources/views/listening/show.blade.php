@@ -38,10 +38,35 @@
                 <div class="card-body">
                     <div class="audio-player-container">
                         <div id="ttsPlayer">
-                            <div class="text-center mb-3">
-                                <button class="btn btn-primary btn-lg" onclick="playTTS()">
-                                    <i class="fas fa-play me-2"></i>Phát audio (TTS)
-                                </button>
+                            <!-- Audio Controls -->
+                            <div class="audio-controls mb-4">
+                                <div class="row align-items-center justify-content-center">
+                                    <!-- TTS Speed Control -->
+                                    <div class="col-auto mb-3 mb-md-0">
+                                        <div class="d-flex align-items-center">
+                                            <label class="form-label me-2 mb-0 fw-semibold">
+                                                <i class="fas fa-tachometer-alt me-1 text-primary"></i>
+                                            </label>
+                                            <select class="form-select form-select-sm" id="ttsSpeed" style="min-width: 140px;">
+                                                <option value="0.8">0.8x (Chậm)</option>
+                                                <option value="1.0" selected>1.0x (Bình thường)</option>
+                                                <option value="1.2">1.2x (Nhanh)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Control Buttons -->
+                                    <div class="col-auto">
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-primary btn-lg px-4" onclick="playTTS()">
+                                                <i class="fas fa-play me-2"></i>Phát audio
+                                            </button>
+                                            <button class="btn btn-outline-secondary btn-lg px-4" onclick="stopTTS()">
+                                                <i class="fas fa-stop me-2"></i>Dừng
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             
                             <!-- Transcript Display -->
@@ -73,30 +98,6 @@
                                 </div>
                             </div>
                             
-                            <div class="alert alert-info mt-3">
-                                <i class="fas fa-info-circle me-2"></i>
-                                <strong>Hướng dẫn:</strong> Nhấn nút "Phát audio" để nghe phát âm tiếng Nhật. 
-                                Bạn có thể nghe nhiều lần trước khi trả lời câu hỏi.
-                            </div>
-                        </div>
-                        
-                        <div class="mt-3">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <button class="btn btn-outline-primary" onclick="playTTS()">
-                                        <i class="fas fa-play me-2"></i>Phát audio
-                                    </button>
-                                    <button class="btn btn-outline-secondary" onclick="stopTTS()">
-                                        <i class="fas fa-stop me-2"></i>Dừng
-                                    </button>
-                                </div>
-                                <div class="col-md-6 text-end">
-                                    <small class="text-muted">
-                                        <i class="fas fa-info-circle me-1"></i>
-                                        Bạn có thể nghe audio nhiều lần
-                                    </small>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -219,17 +220,23 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function playTTS() {
-    const transcript = '{{ $listeningExercise->transcript }}';
-    
-    if (currentUtterance) {
-        speechSynthesis.cancel();
-    }
-    
-    currentUtterance = new SpeechSynthesisUtterance(transcript);
-    currentUtterance.lang = 'ja-JP';
-    currentUtterance.rate = 0.8;
-    currentUtterance.pitch = 1;
-    currentUtterance.volume = 1;
+    try {
+        const transcript = '{{ $listeningExercise->transcript }}';
+        
+        // Get selected speed
+        const speedSelect = document.getElementById('ttsSpeed');
+        const selectedSpeed = parseFloat(speedSelect.value);
+        
+        // Stop any current speech first
+        if (currentUtterance || speechSynthesis.speaking) {
+            speechSynthesis.cancel();
+        }
+        
+        currentUtterance = new SpeechSynthesisUtterance(transcript);
+        currentUtterance.lang = 'ja-JP';
+        currentUtterance.rate = selectedSpeed;
+        currentUtterance.pitch = 1;
+        currentUtterance.volume = 1;
     
     // Try to use Japanese voice
     const voices = speechSynthesis.getVoices();
@@ -258,16 +265,34 @@ function playTTS() {
     
     currentUtterance.onerror = function(event) {
         console.error('TTS error:', event.error);
-        alert('Lỗi phát âm: ' + event.error);
+        // Removed alert popup - just log to console
+        currentUtterance = null;
     };
     
     speechSynthesis.speak(currentUtterance);
+    } catch (error) {
+        console.error('TTS play error:', error);
+        // Don't show alert - just log the error
+        currentUtterance = null;
+    }
 }
 
 function stopTTS() {
-    if (currentUtterance) {
-        speechSynthesis.cancel();
-        currentUtterance = null;
+    try {
+        if (currentUtterance) {
+            // Cancel current utterance
+            speechSynthesis.cancel();
+            currentUtterance = null;
+            console.log('TTS stopped successfully');
+        }
+        
+        // Also cancel any pending speech
+        if (speechSynthesis.speaking) {
+            speechSynthesis.cancel();
+        }
+    } catch (error) {
+        console.log('Stop TTS error (ignored):', error);
+        // Ignore errors when stopping - this is normal behavior
     }
 }
 
@@ -391,4 +416,113 @@ function resetExercise() {
     stopTTS();
 }
 </script>
+@endsection
+
+@section('styles')
+<style>
+    .japanese-text {
+        font-family: 'Noto Sans JP', sans-serif;
+        font-size: 1.2em;
+        font-weight: 500;
+    }
+    
+    .transcript-section {
+        margin-top: 20px;
+    }
+    
+    .audio-player-container {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+    
+    .audio-controls {
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .btn-group .btn {
+        border-radius: 10px;
+        margin: 0 3px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        min-width: 140px;
+    }
+    
+    .btn-group .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    .btn-group .btn:first-child {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        margin-right: 0;
+    }
+    
+    .btn-group .btn:last-child {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        margin-left: 0;
+    }
+    
+    .form-select {
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+    
+    .form-label {
+        color: #495057;
+        font-size: 0.95rem;
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .audio-controls {
+            padding: 15px;
+        }
+        
+        .btn-group .btn {
+            min-width: 120px;
+            font-size: 0.9rem;
+            padding: 8px 16px;
+        }
+        
+        .form-select {
+            font-size: 0.9rem;
+        }
+    }
+    
+    /* Loading States */
+    .btn.loading {
+        position: relative;
+        pointer-events: none;
+    }
+    
+    .btn.loading::after {
+        content: '';
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        margin: auto;
+        border: 2px solid transparent;
+        border-top-color: #ffffff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
 @endsection

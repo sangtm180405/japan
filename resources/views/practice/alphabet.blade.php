@@ -57,6 +57,15 @@
                             </select>
                         </div>
                         
+                        <div class="col-md-3">
+                            <label for="ttsSpeed" class="form-label">Tốc độ phát âm</label>
+                            <select class="form-select" id="ttsSpeed" name="ttsSpeed">
+                                <option value="0.8">0.8x (Chậm)</option>
+                                <option value="1.0" selected>1.0x (Bình thường)</option>
+                                <option value="1.2">1.2x (Nhanh)</option>
+                            </select>
+                        </div>
+                        
                         <div class="col-md-3 d-flex align-items-end">
                             <button type="submit" class="btn btn-primary w-100">
                                 <i class="fas fa-sync me-2"></i>Cập nhật
@@ -215,6 +224,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const character = this.getAttribute('data-character');
             const button = this;
             
+            // Get selected speed
+            const speedSelect = document.getElementById('ttsSpeed');
+            const selectedSpeed = parseFloat(speedSelect.value);
+            
             // Show loading state
             const originalHTML = button.innerHTML;
             button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang phát...';
@@ -229,7 +242,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     type = 'kanji';
                 }
                 
-                await window.playCharacterAudio(character, type);
+                // Use enhanced audio system with speed control
+                if (window.unifiedAudio) {
+                    await window.unifiedAudio.playCharacter(character, type, { rate: selectedSpeed });
+                } else if (window.enhancedTTS) {
+                    // Use enhanced TTS with speed control
+                    await window.enhancedTTS.speak(character, { 
+                        rate: selectedSpeed, 
+                        lang: 'ja-JP' 
+                    });
+                } else {
+                    // Fallback to original system with speed
+                    await window.playCharacterAudio(character, type, selectedSpeed);
+                }
             } catch (error) {
                 console.error('Audio playback error:', error);
                 // Không hiển thị alert gây phiền, chỉ log lỗi
@@ -241,6 +266,42 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// Fallback function for character audio playback with speed control
+window.playCharacterAudio = async function(character, type, speed = 1.0) {
+    return new Promise((resolve, reject) => {
+        if (!('speechSynthesis' in window)) {
+            reject(new Error('Speech synthesis not supported'));
+            return;
+        }
+
+        // Cancel any ongoing speech
+        speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(character);
+        utterance.lang = 'ja-JP';
+        utterance.rate = speed;
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
+
+        // Try to find Japanese voice
+        const voices = speechSynthesis.getVoices();
+        const japaneseVoice = voices.find(voice => 
+            voice.lang.includes('ja-JP') || 
+            voice.lang.includes('ja') ||
+            voice.name.includes('Japanese')
+        );
+        
+        if (japaneseVoice) {
+            utterance.voice = japaneseVoice;
+        }
+
+        utterance.onend = () => resolve();
+        utterance.onerror = (event) => reject(new Error(event.error));
+
+        speechSynthesis.speak(utterance);
+    });
+};
 </script>
 @endpush
 @endsection
