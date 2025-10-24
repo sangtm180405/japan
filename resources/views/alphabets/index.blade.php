@@ -133,6 +133,10 @@
                 @endforelse
             </div>
             
+            <!-- Phân trang -->
+            <div class="d-flex justify-content-center mt-4">
+                {{ $alphabets->appends(request()->query())->links('pagination::bootstrap-4') }}
+            </div>
         </div>
     </div>
 </div>
@@ -166,6 +170,45 @@
 
 .alphabet-card[data-type="romaji"] {
     border-left: 4px solid #17a2b8;
+}
+
+/* Phân trang styling */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.pagination .page-link {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    margin: 0 0.25rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.pagination .page-link:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.pagination .page-item.active .page-link {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.pagination .page-item.disabled .page-link {
+    background: #6c757d;
+    opacity: 0.6;
+}
+
+.pagination .page-item.disabled .page-link:hover {
+    transform: none;
+    box-shadow: none;
 }
 </style>
 @endsection

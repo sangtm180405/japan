@@ -26,7 +26,7 @@ class AlphabetController extends Controller
             $query->where('category', $request->category);
         }
 
-        $alphabets = $query->orderBy('type')->orderBy('order')->get();
+        $alphabets = $query->orderBy('type')->orderBy('order')->paginate(18);
 
         // Lấy thống kê từ database gốc
         $stats = [
