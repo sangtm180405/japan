@@ -44,12 +44,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
     
-    <!-- Enhanced Audio CSS -->
-    <link rel="stylesheet" href="{{ asset('css/enhanced-audio.css') }}">
-    <!-- Responsive Enhancements CSS -->
-    <link rel="stylesheet" href="{{ asset('css/responsive-enhancements.css') }}">
-    <!-- Mobile Navigation CSS -->
-    <link rel="stylesheet" href="{{ asset('css/mobile-navigation.css') }}">
     
     <style>
         body {
