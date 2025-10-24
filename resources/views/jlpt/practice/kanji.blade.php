@@ -39,7 +39,7 @@
                                 @if($data['mode'] == 'practice' || $data['mode'] == 'review')
                                     <div class="kanji-info">
                                         <div class="romaji text-muted mb-2">{{ $kanji->romaji }}</div>
-                                        <div class="meaning h6 mb-2">{{ $kanji->meaning }}</div>
+                                        <div class="meaning h6 mb-2">{{ $kanji->description }}</div>
                                         @if($kanji->stroke_count)
                                             <div class="stroke-count small text-muted mb-2">
                                                 <i class="fas fa-pen-nib me-1"></i>{{ $kanji->stroke_count }} nét
@@ -62,9 +62,10 @@
                                     <div class="test-mode">
                                         <div class="romaji text-muted mb-3">{{ $kanji->romaji }}</div>
                                         <input type="text" class="form-control answer-input" placeholder="Nhập nghĩa tiếng Việt...">
-                                        <div class="correct-answer d-none text-success mt-2">
-                                            <strong>Đáp án:</strong> {{ $kanji->meaning }}
+                                        <div class="correct-answer d-none text-success mt-2" data-answer="{{ $kanji->description }}">
+                                            <strong>Đáp án:</strong> {{ $kanji->description }}
                                         </div>
+                                        <div class="result-feedback mt-2"></div>
                                     </div>
                                 @endif
                                 
@@ -114,19 +115,56 @@ function checkAnswer(button) {
     const card = button.closest('.card');
     const input = card.querySelector('.answer-input');
     const correctAnswer = card.querySelector('.correct-answer');
+    const feedback = card.querySelector('.result-feedback');
+    
+    if (!input || !correctAnswer) {
+        console.error('Không tìm thấy input hoặc correctAnswer element');
+        alert('Lỗi: Không tìm thấy phần tử cần thiết!');
+        return;
+    }
+    
     const userAnswer = input.value.trim().toLowerCase();
-    const actualAnswer = correctAnswer.textContent.split(': ')[1].toLowerCase();
+    
+    // Lấy đáp án đúng từ data attribute
+    let actualAnswer = '';
+    if (correctAnswer.dataset.answer) {
+        actualAnswer = correctAnswer.dataset.answer.toLowerCase().trim();
+    } else {
+        // Fallback: lấy từ text content
+        const answerText = correctAnswer.textContent;
+        if (answerText.includes(': ')) {
+            actualAnswer = answerText.split(': ')[1].toLowerCase().trim();
+        } else {
+            actualAnswer = answerText.replace('Đáp án:', '').toLowerCase().trim();
+        }
+    }
+    
+    // Hiển thị đáp án ngay lập tức
+    correctAnswer.classList.remove('d-none');
     
     if (userAnswer === actualAnswer) {
         input.classList.add('is-valid');
         input.classList.remove('is-invalid');
         correctCount++;
+        
+        if (feedback) {
+            feedback.innerHTML = '<div class="alert alert-success alert-sm mb-0"><i class="fas fa-check me-1"></i>Chính xác!</div>';
+        }
     } else {
         input.classList.add('is-invalid');
         input.classList.remove('is-valid');
+        
+        if (feedback) {
+            feedback.innerHTML = '<div class="alert alert-danger alert-sm mb-0"><i class="fas fa-times me-1"></i>Sai rồi!</div>';
+        }
     }
     
-    correctAnswer.classList.remove('d-none');
+    // Vô hiệu hóa nút kiểm tra sau khi đã kiểm tra
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-check me-1"></i>Đã kiểm tra';
+    button.classList.remove('btn-outline-success');
+    button.classList.add('btn-secondary');
+    
     practicedCount++;
     updateProgress();
 }
@@ -168,6 +206,7 @@ function playAudio(text) {
         AudioPlayer.playText(text);
     }
 }
+
 </script>
 
 <style>
@@ -200,5 +239,22 @@ function playAudio(text) {
     padding: 8px;
     border-radius: 4px;
     margin-top: 8px;
+}
+
+.alert-sm {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+.correct-answer {
+    font-weight: bold;
+    background-color: #d4edda;
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    border: 1px solid #c3e6cb;
+}
+
+.result-feedback {
+    min-height: 2rem;
 }
 </style>
