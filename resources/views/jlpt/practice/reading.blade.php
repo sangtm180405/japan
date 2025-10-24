@@ -262,8 +262,48 @@ function toggleReadingFavorite(button, readingIndex) {
 }
 
 function playReadingAudio(text) {
-    if (typeof AudioPlayer !== 'undefined') {
-        AudioPlayer.playText(text);
+    console.log('=== DEBUG READING AUDIO ===');
+    console.log('Text to speak:', text);
+    console.log('SpeechSynthesis available:', 'speechSynthesis' in window);
+    
+    // Sử dụng Text-to-Speech để phát âm
+    if ('speechSynthesis' in window) {
+        // Dừng bất kỳ âm thanh nào đang phát
+        speechSynthesis.cancel();
+        
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'ja-JP'; // Tiếng Nhật
+        utterance.rate = 0.8; // Tốc độ chậm hơn để dễ nghe
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
+        
+        // Tìm voice tiếng Nhật nếu có
+        const voices = speechSynthesis.getVoices();
+        const japaneseVoice = voices.find(voice => 
+            voice.lang.startsWith('ja') || 
+            voice.name.includes('Japanese') ||
+            voice.name.includes('Yukari') ||
+            voice.name.includes('Kyoko')
+        );
+        
+        if (japaneseVoice) {
+            utterance.voice = japaneseVoice;
+            console.log('Using Japanese voice:', japaneseVoice.name);
+        } else {
+            console.log('No Japanese voice found, using default');
+        }
+        
+        // Event listeners để debug
+        utterance.onstart = () => console.log('Audio started');
+        utterance.onend = () => console.log('Audio ended');
+        utterance.onerror = (event) => console.error('Audio error:', event.error);
+        
+        console.log('Attempting to speak:', text);
+        speechSynthesis.speak(utterance);
+        
+    } else {
+        console.log('Text-to-Speech không được hỗ trợ');
+        alert('Trình duyệt không hỗ trợ phát âm. Hãy thử trình duyệt khác.');
     }
 }
 

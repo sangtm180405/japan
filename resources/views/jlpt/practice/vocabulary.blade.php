@@ -220,9 +220,96 @@ function toggleFavorite(button, vocabId) {
     console.log('Toggled favorite for vocabulary ID:', vocabId);
 }
 
+// Load voices khi trang load
+document.addEventListener('DOMContentLoaded', function() {
+    if ('speechSynthesis' in window) {
+        // Load voices
+        speechSynthesis.getVoices();
+        
+        // Một số trình duyệt cần event này để load voices
+        speechSynthesis.addEventListener('voiceschanged', function() {
+            console.log('Voices loaded:', speechSynthesis.getVoices().length);
+        });
+        
+        // Test TTS ngay khi load
+        setTimeout(() => {
+            console.log('Testing TTS...');
+            const testUtterance = new SpeechSynthesisUtterance('test');
+            testUtterance.volume = 0.1; // Rất nhỏ để không làm phiền
+            testUtterance.onstart = () => console.log('TTS test successful');
+            testUtterance.onerror = (e) => console.error('TTS test failed:', e.error);
+            speechSynthesis.speak(testUtterance);
+        }, 2000);
+    }
+});
+
 function playAudio(text) {
-    if (typeof AudioPlayer !== 'undefined') {
-        AudioPlayer.playText(text);
+    console.log('=== DEBUG VOCABULARY AUDIO ===');
+    console.log('Text to speak:', text);
+    console.log('SpeechSynthesis available:', 'speechSynthesis' in window);
+    
+    // Sử dụng Text-to-Speech để phát âm từ vựng
+    if ('speechSynthesis' in window) {
+        // Dừng bất kỳ âm thanh nào đang phát
+        speechSynthesis.cancel();
+        
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'ja-JP'; // Tiếng Nhật
+        utterance.rate = 0.8; // Tốc độ chậm hơn để dễ nghe
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
+        
+        // Debug voices
+        const voices = speechSynthesis.getVoices();
+        console.log('Total voices available:', voices.length);
+        console.log('All voices:', voices.map(v => `${v.name} (${v.lang})`));
+        
+        // Tìm voice tiếng Nhật nếu có
+        const japaneseVoice = voices.find(voice => 
+            voice.lang.startsWith('ja') || 
+            voice.name.includes('Japanese') ||
+            voice.name.includes('Yukari') ||
+            voice.name.includes('Kyoko')
+        );
+        
+        if (japaneseVoice) {
+            utterance.voice = japaneseVoice;
+            console.log('Using Japanese voice:', japaneseVoice.name, japaneseVoice.lang);
+        } else {
+            console.log('No Japanese voice found, using default');
+            // Thử với voice tiếng Anh có thể phát âm tiếng Nhật
+            const englishVoice = voices.find(voice => 
+                voice.lang.startsWith('en') && 
+                (voice.name.includes('Google') || voice.name.includes('Microsoft'))
+            );
+            if (englishVoice) {
+                utterance.voice = englishVoice;
+                console.log('Using English voice as fallback:', englishVoice.name);
+            }
+        }
+        
+        // Event listeners để debug
+        utterance.onstart = () => console.log('Audio started');
+        utterance.onend = () => console.log('Audio ended');
+        utterance.onerror = (event) => console.error('Audio error:', event.error);
+        
+        console.log('Attempting to speak:', text);
+        speechSynthesis.speak(utterance);
+        
+        // Fallback: nếu không có voice, thử với tiếng Anh
+        setTimeout(() => {
+            if (!speechSynthesis.speaking) {
+                console.log('Trying fallback with English voice');
+                const fallbackUtterance = new SpeechSynthesisUtterance(text);
+                fallbackUtterance.lang = 'en-US';
+                fallbackUtterance.rate = 0.7;
+                speechSynthesis.speak(fallbackUtterance);
+            }
+        }, 100);
+        
+    } else {
+        console.log('Text-to-Speech không được hỗ trợ');
+        alert('Trình duyệt không hỗ trợ phát âm. Hãy thử trình duyệt khác.');
     }
 }
 </script>
